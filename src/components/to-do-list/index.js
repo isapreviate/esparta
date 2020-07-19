@@ -4,12 +4,15 @@ import Task from '../task'
 
 class ToDoList extends React.Component {
   state = {
-    task: '',
+    task: {
+      text: '',
+      status: 'to-do'
+    },
     list: [],
   }
 
   setTask = ({ target: { value } }) => {
-    this.setState({ task: value })
+    this.setState({ task: { text: value, status: 'to-do' } })
 
   }
 
@@ -18,6 +21,7 @@ class ToDoList extends React.Component {
     list.splice(key, 1);
 
     this.setState({ list: list });
+    //this.props.cancelDelete()
   }
 
   handleSubmit = (e) => {
@@ -27,33 +31,41 @@ class ToDoList extends React.Component {
 
     let list = [...this.state.list];
 
-    if (task.trim() === "" || task.length < 3) {
+    if (task.text.trim() === "" || task.text.length < 3) {
       return alert("Preencha o campo!")
     }
 
     list.push(task);
 
-    this.setState({ task: '', list: list });
+    this.setState({
+      task: {
+        text: '',
+        status: "to-do"
+      },
+      list: list
+    });
   }
 
 
   render() {
     console.log(this.state)
 
-    const { list } = this.state;
+    const { list, task } = this.state;
     return (
       <>
         <form onSubmit={this.handleSubmit}>
-          <input onChange={this.setTask}></input>
+          <input value={task.text} onChange={this.setTask}></input>
           <button>Adicionar Task</button>
         </form>
 
         <div>
           {list.map((task, key) => (
             <Task
-              task={task}
+              task={task.text}
               key={key}
+              index={key}
               removeTask={this.removeTask}
+            //cancelDelete={this.cancelDelete.bind(this)}
             />
           ))}
         </div>

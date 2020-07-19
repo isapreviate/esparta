@@ -17,6 +17,10 @@ class Task extends React.Component {
     this.setState({ visible: false });
   };
 
+  test = () => {
+    console.log("testando")
+  }
+
 
   render() {
     const { visible } = this.state;
@@ -27,7 +31,7 @@ class Task extends React.Component {
         <div>
           <Modal
             visible={visible}
-            onOk={this.props.removeTask}
+            onOk={() => this.props.removeTask(this.props.index)}
             onCancel={this.cancelDelete}
             okText="Confirma"
             cancelText="Cancela"
@@ -37,7 +41,9 @@ class Task extends React.Component {
         </div>
 
 
-        <Checkbox>
+        <Checkbox
+          onChange={this.test}
+        >
           {this.props.task}
           < button onClick={this.deleteConfimation} > <DeleteOutlined /></button >
         </Checkbox >
