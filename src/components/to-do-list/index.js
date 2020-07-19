@@ -13,6 +13,13 @@ class ToDoList extends React.Component {
 
   }
 
+  removeTask = (key) => {
+    const list = [...this.state.list]
+    list.splice(key, 1);
+
+    this.setState({ list: list });
+  }
+
   handleSubmit = (e) => {
     e.preventDefault();
 
@@ -20,7 +27,7 @@ class ToDoList extends React.Component {
 
     let list = [...this.state.list];
 
-    if (task.trim() === "" || task.length <= 3) {
+    if (task.trim() === "" || task.length < 3) {
       return alert("Preencha o campo!")
     }
 
@@ -46,10 +53,9 @@ class ToDoList extends React.Component {
             <Task
               task={task}
               key={key}
+              removeTask={this.removeTask}
             />
-          )
-          )
-          }
+          ))}
         </div>
       </>
 
