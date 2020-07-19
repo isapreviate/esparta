@@ -1,10 +1,14 @@
 import React from 'react';
+import { Checkbox } from 'antd'
 
 
 
-function Task(props) {
+
+
+
+const Task = (props) => {
   return (
-    <div>{props.task}</div>
+    <Checkbox>{props.task}</Checkbox>
   );
 }
 
