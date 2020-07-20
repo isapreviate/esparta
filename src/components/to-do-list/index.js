@@ -1,33 +1,29 @@
 import React from 'react';
 import Task from '../task'
+import { Modal } from 'antd';
 
 
 class ToDoList extends React.Component {
   state = {
     task: {
       text: '',
-      status: 'to-do'
+      status: 'pending'
     },
+    id: 0,
     list: [],
+    visible: false
   }
 
-  setTask = ({ target: { value } }) => {
-    this.setState({ task: { text: value, status: 'to-do' } })
-
-  }
-
-  removeTask = (key) => {
-    const list = [...this.state.list]
-    list.splice(key, 1);
-
-    this.setState({ list: list });
-    //this.props.cancelDelete()
+  addTask = ({ target: { value } }) => {
+    this.setState({ task: { text: value, status: 'pending' } })
   }
 
   handleSubmit = (e) => {
     e.preventDefault();
 
-    const { task } = this.state;
+    let { task, id } = this.state;
+    task.id = id;
+    let nextId = id + 1;
 
     let list = [...this.state.list];
 
@@ -40,34 +36,108 @@ class ToDoList extends React.Component {
     this.setState({
       task: {
         text: '',
-        status: "to-do"
+        status: 'pending'
       },
+      id: nextId,
       list: list
     });
   }
 
+  getTaskFromList = (tasks, id) => {
+    let res = tasks.filter(elem => elem.id === id)
+    return res[0]
+  }
+
+  changeStatus = (id) => {
+    let list = [...this.state.list]
+    console.log(list)
+
+    let task = this.getTaskFromList(list, id)
+
+    if (task.status === 'pending') {
+      task.status = 'done'
+    } else {
+      task.status = 'pending'
+    }
+
+    this.setState({ list: list });
+  }
+
+  deleteConfimation = (id) => {
+    this.setState({ visible: true, deleteId: id });
+  }
+
+  cancelDelete = () => {
+    this.setState({ visible: false });
+  };
+
+  removeTask = () => {
+    const { deleteId } = this.state
+    let list = [...this.state.list]
+    // list.splice(deleteId, 1);
+
+
+    list = list.filter(elem => elem.id !== deleteId)
+
+    console.log(list)
+
+    this.setState({ list: list, visible: false });
+  }
+
 
   render() {
-    console.log(this.state)
 
-    const { list, task } = this.state;
+    const { task, visible, list } = this.state;
+
     return (
       <>
+        <div>
+          <Modal
+            visible={visible}
+            onOk={this.removeTask}
+            onCancel={this.cancelDelete}
+            okText="Confirma"
+            cancelText="Cancela"
+          >
+            <p>Tem certeza que deseja deletar esta tarefa?</p>
+          </Modal>
+        </div>
+
         <form onSubmit={this.handleSubmit}>
-          <input value={task.text} onChange={this.setTask}></input>
-          <button>Adicionar Task</button>
+          <input value={task.text} onChange={this.addTask}></input>
+          <button>Adicionar Tarefa</button>
         </form>
 
         <div>
-          {list.map((task, key) => (
-            <Task
-              task={task.text}
-              key={key}
-              index={key}
-              removeTask={this.removeTask}
-            //cancelDelete={this.cancelDelete.bind(this)}
-            />
-          ))}
+          <h3>Lista Pendências</h3>
+          {list.filter(task => task.status === 'pending')
+            .map((task, key) => (
+              <Task
+                task={task.text}
+                key={key}
+                id={task.id}
+                removeTask={this.removeTask}
+                status={task.status}
+                changeStatus={this.changeStatus}
+                deleteConfimation={this.deleteConfimation}
+              />
+            ))}
+        </div>
+        <hr />
+        <h3>Lista Feitas</h3>
+        <div>
+          {list.filter(task => task.status === 'done')
+            .map((task, key) => (
+              <Task
+                task={task.text}
+                key={key}
+                id={task.id}
+                removeTask={this.removeTask}
+                status={task.status}
+                changeStatus={this.changeStatus}
+                deleteConfimation={this.deleteConfimation}
+              />
+            ))}
         </div>
       </>
 
