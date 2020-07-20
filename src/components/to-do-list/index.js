@@ -1,7 +1,7 @@
 import React from 'react';
 import Task from '../task'
-import { Modal } from 'antd';
-
+import { Button, Col, Modal, Row } from 'antd';
+import styled from "styled-components";
 
 class ToDoList extends React.Component {
   state = {
@@ -15,7 +15,7 @@ class ToDoList extends React.Component {
   }
 
   addTask = ({ target: { value } }) => {
-    this.setState({ task: { text: value, status: 'pending' } })
+    this.setState({ task: { text: value, status: 'pending' } });
   }
 
   handleSubmit = (e) => {
@@ -49,10 +49,9 @@ class ToDoList extends React.Component {
   }
 
   changeStatus = (id) => {
-    let list = [...this.state.list]
-    console.log(list)
+    let list = [...this.state.list];
 
-    let task = this.getTaskFromList(list, id)
+    let task = this.getTaskFromList(list, id);
 
     if (task.status === 'pending') {
       task.status = 'done'
@@ -72,14 +71,11 @@ class ToDoList extends React.Component {
   };
 
   removeTask = () => {
-    const { deleteId } = this.state
-    let list = [...this.state.list]
-    // list.splice(deleteId, 1);
+    const { deleteId } = this.state;
 
+    let list = [...this.state.list];
 
-    list = list.filter(elem => elem.id !== deleteId)
-
-    console.log(list)
+    list = list.filter(elem => elem.id !== deleteId);
 
     this.setState({ list: list, visible: false });
   }
@@ -103,46 +99,70 @@ class ToDoList extends React.Component {
           </Modal>
         </div>
 
-        <form onSubmit={this.handleSubmit}>
-          <input value={task.text} onChange={this.addTask}></input>
-          <button>Adicionar Tarefa</button>
-        </form>
+        <MainContainer>
+          <Row >
+            <Col span={12} offset={6}>
+              <FormContainer>
+                <div>
+                  <form onSubmit={this.handleSubmit}>
+                    <input value={task.text} onChange={this.addTask}></input>
+                    <Button onClick={this.handleSubmit} type="primary">Adicionar Tarefa</Button>
+                  </form>
+                </div>
+              </FormContainer>
+            </Col>
+          </Row>
 
-        <div>
-          <h3>Lista Pendências</h3>
-          {list.filter(task => task.status === 'pending')
-            .map((task, key) => (
-              <Task
-                task={task.text}
-                key={key}
-                id={task.id}
-                removeTask={this.removeTask}
-                status={task.status}
-                changeStatus={this.changeStatus}
-                deleteConfimation={this.deleteConfimation}
-              />
-            ))}
-        </div>
-        <hr />
-        <h3>Lista Feitas</h3>
-        <div>
-          {list.filter(task => task.status === 'done')
-            .map((task, key) => (
-              <Task
-                task={task.text}
-                key={key}
-                id={task.id}
-                removeTask={this.removeTask}
-                status={task.status}
-                changeStatus={this.changeStatus}
-                deleteConfimation={this.deleteConfimation}
-              />
-            ))}
-        </div>
+          <Row justify="center" >
+            <Col span={6}>
+              <h3>Tarefas Pendentes</h3>
+              <div>
+                {list.filter(task => task.status === 'pending')
+                  .map((task, key) => (
+                    <Task
+                      task={task.text}
+                      key={key}
+                      id={task.id}
+                      removeTask={this.removeTask}
+                      status={task.status}
+                      changeStatus={this.changeStatus}
+                      deleteConfimation={this.deleteConfimation}
+                    />
+                  ))}
+              </div>
+            </Col>
+
+            <Col span={6}>
+              <h3>Tarefas Concluídas</h3>
+              <div>
+                {list.filter(task => task.status === 'done')
+                  .map((task, key) => (
+                    <Task
+                      task={task.text}
+                      key={key}
+                      id={task.id}
+                      removeTask={this.removeTask}
+                      status={task.status}
+                      changeStatus={this.changeStatus}
+                      deleteConfimation={this.deleteConfimation}
+                    />
+                  ))}
+              </div>
+            </Col>
+          </Row>
+        </MainContainer>
       </>
-
     )
   }
 }
+
+const MainContainer = styled.h3`
+font-size: 18px;
+color: #1890ff;
+`
+const FormContainer = styled.div`
+margin-top: 15px;
+margin-bottom: 15px;
+`
 
 export default ToDoList;
